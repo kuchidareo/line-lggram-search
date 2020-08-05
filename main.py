@@ -8,7 +8,7 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import (
-    MessageEvent, TextMessage, TemplateSendMessage, CarouselTemplate, CarouselColumn)
+    MessageEvent, TextSendMessage, TemplateSendMessage, CarouselTemplate, CarouselColumn, TextMessage)
 
 import requests
 
@@ -66,8 +66,7 @@ def response_message(event):
     else:        
         line_bot_api.reply_message(
         event.reply_token,
-        messages="isnot PPAP"
-        )
+        TextSendMessage(text = "isnot PPAP"))
 
 
 if __name__ == "__main__":

@@ -10,6 +10,9 @@ from linebot.exceptions import (
 from linebot.models import (
     MessageEvent, TextMessage, TemplateSendMessage, CarouselTemplate, CarouselColumn)
 
+import requests
+
+
 app = Flask(__name__)
 
 LINE_CHANNEL_ACCESS_TOKEN = 'I1HVvaO4TBkowJFcYhdwARPGL3xhMogYT8tOSQ5dUQriMzfITnbKMrenHQo/+mXhtxxDhgDevovtIpN6JUL7ARZCBqImBe7Voy+kv2TTKPXl9fOA/pcZGE09o/GxxDxRl8FCswD6Ff5hv+03PVw03gdB04t89/1O/w1cDnyilFU='
@@ -58,8 +61,8 @@ def response_message(event):
         alt_text='template',
         template=CarouselTemplate(columns=notes),
     )
-
-    line_bot_api.reply_message(event.reply_token, messages=messages)
+    if event.reply_token = 'PPAP':
+        line_bot_api.reply_message(event.reply_token, messages=messages)
 
 
 if __name__ == "__main__":

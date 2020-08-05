@@ -63,6 +63,11 @@ def response_message(event):
     )
     if event.reply_token == 'PPAP':
         line_bot_api.reply_message(event.reply_token, messages=messages)
+    else:        
+        line_bot_api.reply_message(
+        event.reply_token,
+        messages="isnot PPAP"
+        )
 
 
 if __name__ == "__main__":

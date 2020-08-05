@@ -61,7 +61,7 @@ def response_message(event):
         alt_text='template',
         template=CarouselTemplate(columns=notes),
     )
-    if event.reply_token = 'PPAP':
+    if event.reply_token == 'PPAP':
         line_bot_api.reply_message(event.reply_token, messages=messages)
 
 

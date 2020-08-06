@@ -40,7 +40,7 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def response_message(event):
     # notesのCarouselColumnの各値は、変更してもらって結構です。
-    notes = [CarouselColumn(thumbnail_image_url="https://renttle.jp/static/img/renttle02.jpg",
+    '''notes = [CarouselColumn(thumbnail_image_url="https://renttle.jp/static/img/renttle02.jpg",
                             title="【ReleaseNote】トークルームを実装しました。",
                             text="creation(創作中・考え中の何かしらのモノ・コト)に関して、意見を聞けるようにトークルーム機能を追加しました。",
                             actions=[{"type": "message","label": "サイトURL","text": "https://renttle.jp/notes/kota/7"}]),
@@ -61,6 +61,7 @@ def response_message(event):
         alt_text='template',
         template=CarouselTemplate(columns=notes),
     )
+    '''
 
     '''
     if event.message.text == "PPAP":
@@ -90,7 +91,7 @@ def mercariSearch(search_word):
     elems_name = soup.select('.items-box-name')
     elems_price = soup.select('.items-box-price')
     for i in range(len(elems_name)):
-        result_list.extend([elems_name[i].text, elems_price[i].text])
+        result_list.append([elems_name[i].text, elems_price[i].text])
 
     return result_list
 

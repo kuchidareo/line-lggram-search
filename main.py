@@ -13,12 +13,14 @@ from linebot.models import (
 import requests
 import bs4
 import re
+import time
 
 app = Flask(__name__)
 
 LINE_CHANNEL_ACCESS_TOKEN = 'I1HVvaO4TBkowJFcYhdwARPGL3xhMogYT8tOSQ5dUQriMzfITnbKMrenHQo/+mXhtxxDhgDevovtIpN6JUL7ARZCBqImBe7Voy+kv2TTKPXl9fOA/pcZGE09o/GxxDxRl8FCswD6Ff5hv+03PVw03gdB04t89/1O/w1cDnyilFU='
 LINE_CHANNEL_SECRET = '708857c7a0cff5555d7bea327d126b2a'
 USER_ID = 'Ub25fb265fec31034d75bb03c70d94900'
+search_word = "LGgram"
 
 line_bot_api = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(LINE_CHANNEL_SECRET)
@@ -36,7 +38,7 @@ def mercariSearchOnSale(search_word):
     elems_photo = soup.select('.items-box-photo')
     for i in range(len(elems_name)):
         new_elems_name = elems_name[i].text.replace(",", "")
-        new_elems_price = elems_price[i].text.replace(",", "").replace("¥ ", "")
+        new_elems_price = elems_price[i].text.replace(",", "")
         new_elems_photo = re.search('figcaption', str(elems_photo[i].__str__))
         if not new_elems_photo:
             result_list.append([new_elems_name, new_elems_price])
@@ -83,25 +85,21 @@ def response_message(event):
         template=CarouselTemplate(columns=notes),
     )
     
-
-    '''
     if event.message.text == "PPAP":
-        line_bot_api.reply_message(event.reply_token, messages=messages)
-    '''
-    
-    search_word = "LGgram"
-    try:
-        result_message = ""
-        result_list = mercariSearchOnSale(search_word)
-        for result in result_list:
-            result_message += result[0] + "\n" + result[1] + "\n"
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text = result_message))
-    except:
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text = "検索出来ませんでした"))
+        for i in range(100):
+            line_bot_api.push_message(USER_ID, TextSendMessage(text=str(i)))
+            time.sleep(60)
+    else:
+        try:
+            result_message = ""
+            result_list = mercariSearchOnSale(search_word)
+            for result in result_list:
+                result_message += result[0] + "\n" + result[1] + "\n"
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text = result_message))
+        except:
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text = "検索出来ませんでした"))
 
-    '''line_bot_api.push_message(USER_ID, TextSendMessage(text='Hello World!'))
-    line_bot_api.push_message(USER_ID, TextSendMessage(text='Hello World2!'))
-    '''
+
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 5000))

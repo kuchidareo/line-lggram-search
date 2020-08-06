@@ -8,7 +8,7 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import (
-    MessageEvent, TextMessage, TemplateSendMessage, CarouselTemplate, CarouselColumn)
+    MessageEvent, TextMessage, TextSendMessage, TemplateSendMessage, CarouselTemplate, CarouselColumn)
 
 app = Flask(__name__)
 
@@ -58,8 +58,10 @@ def response_message(event):
         alt_text='template',
         template=CarouselTemplate(columns=notes),
     )
-
-    line_bot_api.reply_message(event.reply_token, messages=messages)
+    if event.message.text == "PPAP":
+        line_bot_api.reply_message(event.reply_token, messages=messages)
+    else:
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text="isnot PPAP"))
 
 
 if __name__ == "__main__":

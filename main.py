@@ -30,7 +30,8 @@ def searchUsedMarket(search_word_list):
     M.append(["mercari","-------"])
     R = rakumaSearchOnSale(search_word_list)
     R.append(["rakuma","-------"])
-    return M.append(R)
+    result_list = M + R
+    return result_list
 
 def mercariSearchOnSale(search_word_list):
     result_list = []

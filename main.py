@@ -39,7 +39,7 @@ def mercariSearchOnSale(search_word_list):
         headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
         res = requests.get(page, headers=headers)
         res.raise_for_status()
-        soup = bs4.BeautifulSoup(res.text)
+        soup = bs4.BeautifulSoup(res.text,features="html.parser")
         elems_name = soup.select('.items-box-name')
         elems_price = soup.select('.items-box-price')
         elems_photo = soup.select('.items-box-photo')
@@ -60,7 +60,7 @@ def rakumaSearchOnSale(search_word_list):
         headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
         res = requests.get(page, headers=headers)
         res.raise_for_status()
-        soup = bs4.BeautifulSoup(res.text)
+        soup = bs4.BeautifulSoup(res.text,features="html.parser")
         elems_name = soup.findAll("span",{"itemprop":"name"})
         elems_price = soup.findAll("span",{"itemprop":"price"})
         elems_sold = soup.select(".link_search_image")

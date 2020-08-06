@@ -17,9 +17,14 @@ app = Flask(__name__)
 
 LINE_CHANNEL_ACCESS_TOKEN = 'I1HVvaO4TBkowJFcYhdwARPGL3xhMogYT8tOSQ5dUQriMzfITnbKMrenHQo/+mXhtxxDhgDevovtIpN6JUL7ARZCBqImBe7Voy+kv2TTKPXl9fOA/pcZGE09o/GxxDxRl8FCswD6Ff5hv+03PVw03gdB04t89/1O/w1cDnyilFU='
 LINE_CHANNEL_SECRET = '708857c7a0cff5555d7bea327d126b2a'
+USER_ID = 'Ub25fb265fec31034d75bb03c70d94900'
 
 line_bot_api = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(LINE_CHANNEL_SECRET)
+
+
+line_bot_api.push_message(USER_ID, TextSendMessage(text='Hello World!'))
+line_bot_api.push_message(USER_ID, TextSendMessage(text='Hello World2!'))
 
 def mercariSearch(search_word):
     result_list = []
@@ -51,7 +56,6 @@ def callback():
         abort(400)
 
     return 'OK'
-
 
 @handler.add(MessageEvent, message=TextMessage)
 def response_message(event):
@@ -87,7 +91,6 @@ def response_message(event):
     '''
     
     search_word = "LGgram"
-    ##line_bot_api.reply_message(event.reply_token, TextSendMessage(text = "検索を開始しました"))
     try:
         result_message = ""
         result_list = mercariSearch(search_word)

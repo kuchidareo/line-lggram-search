@@ -12,6 +12,7 @@ from linebot.models import (
 
 import requests
 import bs4
+import re
 
 app = Flask(__name__)
 
@@ -22,23 +23,23 @@ USER_ID = 'Ub25fb265fec31034d75bb03c70d94900'
 line_bot_api = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(LINE_CHANNEL_SECRET)
 
-
-line_bot_api.push_message(USER_ID, TextSendMessage(text='Hello World!'))
-line_bot_api.push_message(USER_ID, TextSendMessage(text='Hello World2!'))
-
-def mercariSearch(search_word):
+def mercariSearchOnSale(search_word):
     result_list = []
-    ## https://www.mercari.com/jp/search/?keyword=LGgram
     page = 'https://www.mercari.com/jp/search/?keyword={0}'.format(search_word)
- 
+
     headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
     res = requests.get(page, headers=headers)
     res.raise_for_status()
     soup = bs4.BeautifulSoup(res.text)
     elems_name = soup.select('.items-box-name')
     elems_price = soup.select('.items-box-price')
+    elems_photo = soup.select('.items-box-photo')
     for i in range(len(elems_name)):
-        result_list.append([elems_name[i].text, elems_price[i].text])
+        new_elems_name = elems_name[i].text.replace(",", "")
+        new_elems_price = elems_price[i].text.replace(",", "").replace("¥ ", "")
+        new_elems_photo = re.search('figcaption', str(elems_photo[i].__str__))
+        if not new_elems_photo:
+            result_list.append([new_elems_name, new_elems_price])
 
     return result_list
 
@@ -86,19 +87,21 @@ def response_message(event):
     '''
     if event.message.text == "PPAP":
         line_bot_api.reply_message(event.reply_token, messages=messages)
-    else:
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text="isnot PPAP"))
     '''
     
     search_word = "LGgram"
     try:
         result_message = ""
-        result_list = mercariSearch(search_word)
+        result_list = mercariSearchOnSale(search_word)
         for result in result_list:
             result_message += result[0] + "\n" + result[1] + "\n"
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text = result_message))
     except:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text = "検索出来ませんでした"))
+
+    '''line_bot_api.push_message(USER_ID, TextSendMessage(text='Hello World!'))
+    line_bot_api.push_message(USER_ID, TextSendMessage(text='Hello World2!'))
+    '''
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 5000))

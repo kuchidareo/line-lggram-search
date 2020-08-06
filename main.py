@@ -86,8 +86,8 @@ def response_message(event):
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text="isnot PPAP"))
     
     search_word = "LGgram"
+    line_bot_api.reply_message(event.reply_token, TextSendMessage(text = "検索を開始しました"))
     try:
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text = "検索を開始しました"))
         result_message = ""
         result_list = mercariSearch(search_word)
         for result in result_list:

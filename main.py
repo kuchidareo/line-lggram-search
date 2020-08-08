@@ -121,11 +121,11 @@ def response_message(event):
                                             text = result[1],
                                             actions = [{"type": "message","label": "サイトURL","text": result[2]}])
                 notes.append(new_column)
-                messages = TemplateSendMessage(
+            messages = TemplateSendMessage(
                             alt_text='LG gram search result',
                             template=CarouselTemplate(columns=notes),
                             )
-                line_bot_api.push_message(USER_ID, messages=messages)
+            line_bot_api.push_message(USER_ID, messages=messages)
     except:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text = "検索出来ませんでした"))
 

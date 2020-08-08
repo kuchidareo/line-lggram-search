@@ -108,7 +108,7 @@ def response_message(event):
     try:
         result_list = searchUsedMarket(search_word_list)
         result_list.sort(key=lambda x: x[1]) # priceでsort
-        line_bot_api.push_message(USER_ID, TextSendMessage(text=result_list))
+        line_bot_api.push_message(USER_ID, TextSendMessage(text=str(result_list)))
         size = 10 # Max10個までなので
         for start in range(0, len(result_list), size):
             notes = []

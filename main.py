@@ -131,7 +131,7 @@ def response_message(event):
         try:
             result_list = searchUsedMarket(search_word_list)
 
-            for i in range(3):
+            for i in range(1):
                 new_column = CarouselColumn(thumbnail_image_url = result_list[i][3],
                                             title = result_list[i][0],
                                             text = result_list[i][1],
@@ -146,11 +146,59 @@ def response_message(event):
         except:
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text = "検索出来ませんでした"))
     elif event.message.text == "PPAP2":
-        result_list = searchUsedMarket(search_word_list)
-        line_bot_api.reply_message(event.reply_token,TextSendMessage(text = str(result_list)))
+        try:
+            result_list = searchUsedMarket(search_word_list)
+
+            for i in range(2):
+                new_column = CarouselColumn(thumbnail_image_url = result_list[i][3],
+                                            title = result_list[i][0],
+                                            text = result_list[i][1],
+                                            actions = [{"type": "message","label": "サイトURL","text": result_list[i][2]}])
+                notes.append(new_column)
+
+            messages = TemplateSendMessage(
+                        alt_text='LG gram search result',
+                        template=CarouselTemplate(columns=notes),
+                        )
+            line_bot_api.reply_message(event.reply_token, messages=messages)
+        except:
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text = "検索出来ませんでした"))
     elif event.message.text == "PPAP3":
-        result_list = searchUsedMarket(search_word_list)
-        line_bot_api.reply_message(event.reply_token,TextSendMessage(text = "this is ppap3"))
+        try:
+            result_list = searchUsedMarket(search_word_list)
+
+            for i in range(3):
+                new_column = CarouselColumn(thumbnail_image_url = result_list[i][3],
+                                            title = result_list[i][0],
+                                            text = result_list[i][1],
+                                            actions = [{"type": "message","label": "サイトURL","text": result_list[i][2]}])
+                notes.append(new_column)
+
+            messages = TemplateSendMessage(
+                        alt_text='LG gram search result',
+                        template=CarouselTemplate(columns=notes),
+                        )
+            line_bot_api.reply_message(event.reply_token, messages=messages)
+        except:
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text = "検索出来ませんでした"))
+    elif event.message.text == "PPAP4":
+        try:
+            result_list = searchUsedMarket(search_word_list)
+
+            for i in range(4):
+                new_column = CarouselColumn(thumbnail_image_url = result_list[i][3],
+                                            title = result_list[i][0],
+                                            text = result_list[i][1],
+                                            actions = [{"type": "message","label": "サイトURL","text": result_list[i][2]}])
+                notes.append(new_column)
+
+            messages = TemplateSendMessage(
+                        alt_text='LG gram search result',
+                        template=CarouselTemplate(columns=notes),
+                        )
+            line_bot_api.reply_message(event.reply_token, messages=messages)
+        except:
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text = "検索出来ませんでした"))
         
 
 

@@ -115,7 +115,7 @@ def response_message(event):
             for result in ten_digit_result_list:
                 new_column = CarouselColumn(thumbnail_image_url = result[3],
                                             title = result[0],
-                                            text = ("{:,}".format(result[1]) + "円"), # set number format
+                                            text =　result[1], # set number format
                                             actions = [URIAction(label='詳しく見る',uri=result[2])])
                 notes.append(new_column)
             messages = TemplateSendMessage(

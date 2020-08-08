@@ -27,9 +27,7 @@ handler = WebhookHandler(LINE_CHANNEL_SECRET)
 
 def searchUsedMarket(search_word_list):
     M = mercariSearchOnSale(search_word_list)
-    M.append(["mercari","-------","-------","-------"])
     R = rakumaSearchOnSale(search_word_list)
-    R.append(["rakuma","-------","-------","-------"])
     result_list = M + R
     return result_list
 
@@ -107,8 +105,6 @@ def response_message(event):
     # item[1]:price
     # item[2]:url
     # item[3]:image_url
-
-
     try:
         result_list = searchUsedMarket(search_word_list)
         size = 10 # Max10個までなので

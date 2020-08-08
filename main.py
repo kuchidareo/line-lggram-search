@@ -146,8 +146,7 @@ def response_message(event):
         except:
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text = "検索出来ませんでした"))
     else:
-        result_list = searchUsedMarket(search_word_list)
-        line_bot_api.reply_message(event.reply_token,TextSendMessage(text = result_list))
+        line_bot_api.reply_message(event.reply_token,TextSendMessage(text = "isnot PPAP"))
         
 
 

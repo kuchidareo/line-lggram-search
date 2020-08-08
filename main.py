@@ -115,7 +115,7 @@ def response_message(event):
             for result in ten_digit_result_list:
                 new_column = CarouselColumn(thumbnail_image_url = result[3],
                                             title = result[0],
-                                            text = result[1],
+                                            text = str("{:,}".format(result[1])) + "円"),
                                             actions = [URIAction(label='詳しく見る',uri=result[2])])
                 notes.append(new_column)
             messages = TemplateSendMessage(
@@ -123,7 +123,7 @@ def response_message(event):
                             template=CarouselTemplate(columns=notes),
                             )
             line_bot_api.push_message(USER_ID, messages=messages)
-            time.sleep(2)
+            time.sleep(10)
     except:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text = "検索出来ませんでした"))
 

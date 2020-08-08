@@ -145,8 +145,12 @@ def response_message(event):
             line_bot_api.reply_message(event.reply_token, messages=messages)
         except:
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text = "検索出来ませんでした"))
-    else:
-        line_bot_api.reply_message(event.reply_token,TextSendMessage(text = "isnot PPAP"))
+    elif event.message.text == "PPAP2":
+        result_list = searchUsedMarket(search_word_list)
+        line_bot_api.reply_message(event.reply_token,TextSendMessage(text = str(result_list)))
+    elif event.message.text == "PPAP3":
+        result_list = searchUsedMarket(search_word_list)
+        line_bot_api.reply_message(event.reply_token,TextSendMessage(text = "this is ppap3"))
         
 
 

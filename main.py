@@ -107,8 +107,7 @@ def response_message(event):
     # item[3]:image_url
     try:
         result_list = searchUsedMarket(search_word_list)
-        result_list.sort(key=lambda x: x[1]) # priceでsort
-        line_bot_api.push_message(USER_ID, TextSendMessage(text=str(result_list)))
+        result_list.sort(key=lambda x: int(x[1])) # priceでsort
         size = 10 # Max10個までなので
         for start in range(0, len(result_list), size):
             notes = []
@@ -116,7 +115,7 @@ def response_message(event):
             for result in ten_digit_result_list:
                 new_column = CarouselColumn(thumbnail_image_url = result[3],
                                             title = result[0],
-                                            text = "{:,}".format(result[1]), # set number format
+                                            text = str("{:,}".format(int(result[1]))), # set number format
                                             actions = [URIAction(label='詳しく見る',uri=result[2])])
                 notes.append(new_column)
             messages = TemplateSendMessage(

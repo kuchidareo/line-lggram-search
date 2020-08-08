@@ -116,13 +116,14 @@ def response_message(event):
                 new_column = CarouselColumn(thumbnail_image_url = result[3],
                                             title = result[0],
                                             text = result[1],
-                                            actions = [URIAction(label='URL',uri=result[2])])
+                                            actions = [URIAction(label='詳しく見る',uri=result[2])])
                 notes.append(new_column)
             messages = TemplateSendMessage(
                             alt_text='LG gram search result',
                             template=CarouselTemplate(columns=notes),
                             )
             line_bot_api.push_message(USER_ID, messages=messages)
+            time.sleep(2)
     except:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text = "検索出来ませんでした"))
 

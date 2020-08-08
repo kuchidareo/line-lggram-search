@@ -107,122 +107,27 @@ def response_message(event):
     # item[1]:price
     # item[2]:url
     # item[3]:image_url
-    notes = []
-    '''
-    notes = [CarouselColumn(thumbnail_image_url="https://renttle.jp/static/img/renttle02.jpg",
-                            title="【ReleaseNote】トークルームを実装しました。",
-                            text="creation(創作中・考え中の何かしらのモノ・コト)に関して、意見を聞けるようにトークルーム機能を追加しました。",
-                            actions=[{"type": "message","label": "サイトURL","text": "https://renttle.jp/notes/kota/7"}]),
 
-             CarouselColumn(thumbnail_image_url="https://renttle.jp/static/img/renttle03.jpg",
-                            title="ReleaseNote】創作中の活動を報告する機能を追加しました。",
-                            text="創作中や考え中の時点の活動を共有できる機能を追加しました。",
-                            actions=[
-                                {"type": "message", "label": "サイトURL", "text": "https://renttle.jp/notes/kota/6"}]),
 
-             CarouselColumn(thumbnail_image_url="https://renttle.jp/static/img/renttle04.jpg",
-                            title="【ReleaseNote】タグ機能を追加しました。",
-                            text="「イベントを作成」「記事を投稿」「本を登録」にタグ機能を追加しました。",
-                            actions=[
-                                {"type": "message", "label": "サイトURL", "text": "https://renttle.jp/notes/kota/5"}])]
-    '''
-
-    if event.message.text == "PPAP5":
-        try:
-            result_list = searchUsedMarket(search_word_list)
-
-            for i in range(5):
-                new_column = CarouselColumn(thumbnail_image_url = result_list[i][3],
-                                            title = result_list[i][0],
-                                            text = result_list[i][1],
-                                            actions = [{"type": "message","label": "サイトURL","text": result_list[i][2]}])
+    try:
+        result_list = searchUsedMarket(search_word_list)
+        size = 10 # Max10個までなので
+        for start in range(0, len(result_list), size):
+            notes = []
+            ten_digit_result_list = result_list[start:start+size]
+            for result in ten_digit_result_list:
+                new_column = CarouselColumn(thumbnail_image_url = result[3],
+                                            title = result[0],
+                                            text = result[1],
+                                            actions = [{"type": "message","label": "サイトURL","text": result[2]}])
                 notes.append(new_column)
-
-            messages = TemplateSendMessage(
-                        alt_text='LG gram search result',
-                        template=CarouselTemplate(columns=notes),
-                        )
-            line_bot_api.reply_message(event.reply_token, messages=messages)
-        except:
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text = "検索出来ませんでした"))
-    elif event.message.text == "PPAP12":
-        try:
-            result_list = searchUsedMarket(search_word_list)
-
-            for i in range(12):
-                new_column = CarouselColumn(thumbnail_image_url = result_list[i][3],
-                                            title = result_list[i][0],
-                                            text = result_list[i][1],
-                                            actions = [{"type": "message","label": "サイトURL","text": result_list[i][2]}])
-                notes.append(new_column)
-
-            messages = TemplateSendMessage(
-                        alt_text='LG gram search result',
-                        template=CarouselTemplate(columns=notes),
-                        )
-            line_bot_api.reply_message(event.reply_token, messages=messages)
-        except:
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text = "検索出来ませんでした"))
-    elif event.message.text == "PPAP6":
-        try:
-            result_list = searchUsedMarket(search_word_list)
-
-            for i in range(6):
-                new_column = CarouselColumn(thumbnail_image_url = result_list[i][3],
-                                            title = result_list[i][0],
-                                            text = result_list[i][1],
-                                            actions = [{"type": "message","label": "サイトURL","text": result_list[i][2]}])
-                notes.append(new_column)
-
-            messages = TemplateSendMessage(
-                        alt_text='LG gram search result',
-                        template=CarouselTemplate(columns=notes),
-                        )
-            line_bot_api.reply_message(event.reply_token, messages=messages)
-        except:
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text = "検索出来ませんでした"))
-    elif event.message.text == "PPAP8":
-        try:
-            result_list = searchUsedMarket(search_word_list)
-
-            for i in range(8):
-                new_column = CarouselColumn(thumbnail_image_url = result_list[i][3],
-                                            title = result_list[i][0],
-                                            text = result_list[i][1],
-                                            actions = [{"type": "message","label": "サイトURL","text": result_list[i][2]}])
-                notes.append(new_column)
-
-            messages = TemplateSendMessage(
-                        alt_text='LG gram search result',
-                        template=CarouselTemplate(columns=notes),
-                        )
-            line_bot_api.reply_message(event.reply_token, messages=messages)
-        except:
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text = "検索出来ませんでした"))
-    elif event.message.text == "PPAP10":
-        try:
-            result_list = searchUsedMarket(search_word_list)
-
-            for i in range(10):
-                new_column = CarouselColumn(thumbnail_image_url = result_list[i][3],
-                                            title = result_list[i][0],
-                                            text = result_list[i][1],
-                                            actions = [{"type": "message","label": "サイトURL","text": result_list[i][2]}])
-                notes.append(new_column)
-
-            messages = TemplateSendMessage(
-                        alt_text='LG gram search result',
-                        template=CarouselTemplate(columns=notes),
-                        )
-            line_bot_api.reply_message(event.reply_token, messages=messages)
-        except:
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text = "検索出来ませんでした"))
-        
-
-
-    
-
-
+                messages = TemplateSendMessage(
+                            alt_text='LG gram search result',
+                            template=CarouselTemplate(columns=notes),
+                            )
+                line_bot_api.push_message(USER_ID, messages=messages)
+    except:
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text = "検索出来ませんでした"))
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 5000))

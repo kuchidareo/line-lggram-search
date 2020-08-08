@@ -27,16 +27,16 @@ handler = WebhookHandler(LINE_CHANNEL_SECRET)
 
 def searchUsedMarket(search_word_list):
     M = mercariSearchOnSale(search_word_list)
-    M.append(["mercari","-------"])
+    M.append(["mercari","-------","-------","-------"])
     R = rakumaSearchOnSale(search_word_list)
-    R.append(["rakuma","-------"])
+    R.append(["rakuma","-------","-------","-------"])
     result_list = M + R
     return result_list
 
 def mercariSearchOnSale(search_word_list):
     result_list = []
     for search_word in search_word_list:
-        page = 'https://www.mercari.com/jp/search/?keyword={0}'.format(search_word)
+        page = 'https://www.mercari.com/jp/search/?keyword={0}&status_on_sale=1'.format(search_word)
         headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
         res = requests.get(page, headers=headers)
         res.raise_for_status()
@@ -44,12 +44,17 @@ def mercariSearchOnSale(search_word_list):
         elems_name = soup.select('.items-box-name')
         elems_price = soup.select('.items-box-price')
         elems_photo = soup.select('.items-box-photo')
+        elems_url = soup.findAll('section',{'class':'items-box'})
+        elems_image = soup.findAll('figure',{'class','items-box-photo'})
         for i in range(len(elems_name)):
             new_elems_name = elems_name[i].text.replace(",", "")
             new_elems_price = elems_price[i].text.replace(",", "").replace("¥","")
             new_elems_photo = re.search('figcaption', str(elems_photo[i].__str__))
+            new_elems_url = 'https://www.mercari.com' + elems_url[i].find('a').attrs['href']
+            new_elems_image = elems_image[i].find('img').attrs['data-src']  # https://static.mercdn.net/c!/w=240/thumb/photos/m54024365745_1.jpg?1596248228
+            new_elems_image.replace(new_elems_image[26:40],'item/detail/orig') # https://static.mercdn.net/item/detail/orig/photos/m54024365745_1.jpg?1596248228
             if not new_elems_photo and int(new_elems_price) >= 30000:
-                result_list.append([new_elems_name, new_elems_price])
+                result_list.append([new_elems_name, new_elems_price, new_elems_url, new_elems_image])
     ## 重複を解消する
     result_list = list(map(list, set(map(tuple, result_list))))
     return result_list
@@ -65,18 +70,22 @@ def rakumaSearchOnSale(search_word_list):
         elems_name = soup.findAll("span",{"itemprop":"name"})
         elems_price = soup.findAll("span",{"itemprop":"price"})
         elems_sold = soup.select(".link_search_image")
+        elems_url = soup.findAll("div",{"class":"item-box__image-wrapper"})
+        elems_image = soup.findAll("div",{"class":"item-box__image-wrapper"})
         ## elems_nameは検索結果が0件でも2つ存在しているため
         if len(elems_price) != 0:
             for i in range(len(elems_price)):
                 new_elems_name = elems_name[i].text.replace(",", "")
                 new_elems_price = elems_price[i].text.replace(",", "").replace("¥","")
                 new_elems_sold = re.search('item-box__soldout_ribbon', str(elems_sold[i].__str__))
+                new_elems_url = elems_url[i].find('a').attrs['href']
+                new_elems_image = elems_image[i].find('a').find('img').attrs['data-original']  # https://img.fril.jp/img/301356431/m/850895908.jpg?1582422155
+                new_elems_image.replace(new_elems_image[34],'l') # https://img.fril.jp/img/301356431/l/850895908.jpg?1582422155
                 if not new_elems_sold and int(new_elems_price) >= 30000:
-                    result_list.append([new_elems_name, new_elems_price])
+                    result_list.append([new_elems_name, new_elems_price, new_elems_url, new_elems_image])
     ## 重複を解消する
     result_list = list(map(list, set(map(tuple, result_list))))
     return result_list
-
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -94,7 +103,12 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def response_message(event):
-    # notesのCarouselColumnの各値は、変更してもらって結構です。
+    # item[0]:name
+    # item[1]:price
+    # item[2]:url
+    # item[3]:image_url
+    notes = []
+    '''
     notes = [CarouselColumn(thumbnail_image_url="https://renttle.jp/static/img/renttle02.jpg",
                             title="【ReleaseNote】トークルームを実装しました。",
                             text="creation(創作中・考え中の何かしらのモノ・コト)に関して、意見を聞けるようにトークルーム機能を追加しました。",
@@ -111,24 +125,27 @@ def response_message(event):
                             text="「イベントを作成」「記事を投稿」「本を登録」にタグ機能を追加しました。",
                             actions=[
                                 {"type": "message", "label": "サイトURL", "text": "https://renttle.jp/notes/kota/5"}])]
-
-    messages = TemplateSendMessage(
-        alt_text='template',
-        template=CarouselTemplate(columns=notes),
-    )
+    '''
+    
     try:
-        result_message = ""
         result_list = searchUsedMarket(search_word_list)
-        for result in result_list:
-            result_message += result[0] + "\n" + result[1] + "円\n"
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text = result_message))
+
+        for item in result_list:
+            new_column = CarouselColumn(thumbnail_image_url = item[3],
+                                        title = item[0],
+                                        text = item[1],
+                                        actions = [{"type": "message","label": "サイトURL","text": item[2]}])
+            notes.append(new_column)
+
+        messages = TemplateSendMessage(
+                    alt_text='LG gram search result',
+                    template=CarouselTemplate(columns=notes),
+                    )
+        line_bot_api.reply_message(event.reply_token, messages=messages)
     except:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text = "検索出来ませんでした"))
-    '''
-    if event.message.text == "PPAP":
 
-    else:
-    '''
+    
 
 
 

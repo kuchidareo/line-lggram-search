@@ -107,6 +107,7 @@ def response_message(event):
     # item[3]:image_url
     try:
         result_list = searchUsedMarket(search_word_list)
+        result_list.sort(key=lambda x: x[1]) # priceでsort
         size = 10 # Max10個までなので
         for start in range(0, len(result_list), size):
             notes = []
@@ -115,7 +116,7 @@ def response_message(event):
                 new_column = CarouselColumn(thumbnail_image_url = result[3],
                                             title = result[0],
                                             text = result[1],
-                                            actions = [{"type": "message","label": "サイトURL","text": result[2]}])
+                                            actions = [URIAction(label='URL',uri=result[2])])
                 notes.append(new_column)
             messages = TemplateSendMessage(
                             alt_text='LG gram search result',

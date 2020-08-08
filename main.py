@@ -126,24 +126,30 @@ def response_message(event):
                             actions=[
                                 {"type": "message", "label": "サイトURL", "text": "https://renttle.jp/notes/kota/5"}])]
     '''
-    
-    try:
+
+    if event.message.text == "PPAP":
+        try:
+            result_list = searchUsedMarket(search_word_list)
+
+            for item in result_list:
+                new_column = CarouselColumn(thumbnail_image_url = item[3],
+                                            title = item[0],
+                                            text = item[1],
+                                            actions = [{"type": "message","label": "サイトURL","text": item[2]}])
+                notes.append(new_column)
+
+            messages = TemplateSendMessage(
+                        alt_text='LG gram search result',
+                        template=CarouselTemplate(columns=notes),
+                        )
+            line_bot_api.reply_message(event.reply_token, messages=messages)
+        except:
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text = "検索出来ませんでした"))
+    else:
         result_list = searchUsedMarket(search_word_list)
+        line_bot_api.reply_message(event.reply_token,TextSendMessage(text = result_list))
+        
 
-        for item in result_list:
-            new_column = CarouselColumn(thumbnail_image_url = item[3],
-                                        title = item[0],
-                                        text = item[1],
-                                        actions = [{"type": "message","label": "サイトURL","text": item[2]}])
-            notes.append(new_column)
-
-        messages = TemplateSendMessage(
-                    alt_text='LG gram search result',
-                    template=CarouselTemplate(columns=notes),
-                    )
-        line_bot_api.reply_message(event.reply_token, messages=messages)
-    except:
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text = "検索出来ませんでした"))
 
     
 

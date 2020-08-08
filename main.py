@@ -131,11 +131,11 @@ def response_message(event):
         try:
             result_list = searchUsedMarket(search_word_list)
 
-            for item in result_list:
-                new_column = CarouselColumn(thumbnail_image_url = item[3],
-                                            title = item[0],
-                                            text = item[1],
-                                            actions = [{"type": "message","label": "サイトURL","text": item[2]}])
+            for i in range(3):
+                new_column = CarouselColumn(thumbnail_image_url = result_list[i][3],
+                                            title = result_list[i][0],
+                                            text = result_list[i][1],
+                                            actions = [{"type": "message","label": "サイトURL","text": result_list[i][2]}])
                 notes.append(new_column)
 
             messages = TemplateSendMessage(

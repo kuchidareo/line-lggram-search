@@ -106,9 +106,19 @@ def response_message(event):
     # item[2]:url
     # item[3]:image_url
     if event.message.text == "PPAP":
-        for i in range(10000):
-            line_bot_api.push_message(USER_ID, TextSendMessage(text = str(i)))
-            time.sleep(i)
+        for i in range(100):
+            if i == 0:
+                result_list = searchUsedMarket(search_word_list)
+                result_list.sort(key=lambda x: int(x[1])) # priceでsort
+            else:
+                new_result_list = searchUsedMarket(search_word_list)
+                new_result_list.sort(key=lambda x: int(x[1])) # priceでsort
+                if new_result_list != result_list:
+                    result_list = new_result_list
+                    line_bot_api.push_message(USER_ID, TextSendMessage(text = "新しいLG gramが出品されました"))
+                else:
+                    line_bot_api.push_message(USER_ID, TextSendMessage(text = "新しいLG gramは出品されていません"))
+            time.sleep(1800)
     else:
         try:
             result_list = searchUsedMarket(search_word_list)

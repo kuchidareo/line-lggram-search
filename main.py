@@ -109,10 +109,12 @@ def response_message(event):
         for i in range(100):
             if i == 0:
                 result_list = searchUsedMarket(search_word_list)
-                result_list.sort(key=lambda x: int(x[1])) # priceでsort
+                result_list.sort(key=lambda x: x[0]) # nameでsortし、一意的な順序に並び替え
+                result_list = [result[0:2] for result in result_list] # 毎回異なるurlを消去
             else:
                 new_result_list = searchUsedMarket(search_word_list)
-                new_result_list.sort(key=lambda x: int(x[1])) # priceでsort
+                new_result_list.sort(key=lambda x: x[0]) # nameでsortし、一意的な順序に並び替え
+                new_result_list = [new_result[0:2] for new_result in new_result_list] # 毎回異なるurlを消去
                 if new_result_list != result_list:
                     result_list = new_result_list
                     line_bot_api.push_message(USER_ID, TextSendMessage(text = "新しいLG gramが出品されました"))

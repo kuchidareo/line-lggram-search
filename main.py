@@ -14,6 +14,7 @@ import requests
 import bs4
 import re
 import time
+import datetime
 
 app = Flask(__name__)
 
@@ -24,6 +25,13 @@ search_word_list = [r"LG%20gram","LGgram"]
 
 line_bot_api = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(LINE_CHANNEL_SECRET)
+
+def calculateTime():
+    now_time = datetime.datetime.now()
+    today_sleep_time = datetime.datetime(year=now_time.year,month=now_time.month,day=now_time.day+1,hour=0)
+    td = today_sleep_time - now_time
+
+    return int(td.seconds/1800)
 
 def searchUsedMarket(search_word_list):
     M = mercariSearchOnSale(search_word_list)
@@ -106,7 +114,8 @@ def response_message(event):
     # item[2]:url
     # item[3]:image_url
     if event.message.text == "PPAP":
-        for i in range(100):
+        line_bot_api.push_message(USER_ID, TextSendMessage(text = "自動運転モード"))
+        for i in range(calculateTime):
             if i == 0:
                 result_list = searchUsedMarket(search_word_list)
                 result_list.sort(key=lambda x: x[0]) # nameでsortし、一意的な順序に並び替え
@@ -118,9 +127,8 @@ def response_message(event):
                 if new_result_list != result_list:
                     result_list = new_result_list
                     line_bot_api.push_message(USER_ID, TextSendMessage(text = "新しいLG gramが出品されました"))
-                else:
-                    line_bot_api.push_message(USER_ID, TextSendMessage(text = "新しいLG gramは出品されていません"))
             time.sleep(1800)
+        line_bot_api.push_message(USER_ID, TextSendMessage(text = "自動運転モード終了"))
     else:
         try:
             result_list = searchUsedMarket(search_word_list)

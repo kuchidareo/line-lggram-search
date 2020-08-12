@@ -115,8 +115,9 @@ def response_message(event):
     # item[1]:price
     # item[2]:url
     # item[3]:image_url
+    print(event)
     if event.message.text == "PPAP":
-        line_bot_api.push_message(USER_ID, TextSendMessage(text = "自動運転モード"))
+        line_bot_api.push_message(event['source']['userId'], TextSendMessage(text = "自動運転モード"))
         for i in range(calculateTime):
             if i == 0:
                 result_list = searchUsedMarket(search_word_list)
@@ -128,7 +129,7 @@ def response_message(event):
                 new_result_list = [new_result[0:2] for new_result in new_result_list] # 毎回異なるurlを消去
                 if new_result_list != result_list:
                     result_list = new_result_list
-                    line_bot_api.push_message(USER_ID, TextSendMessage(text = "新しいLG gramが出品されました"))
+                    line_bot_api.push_message(event['source']['userId'], TextSendMessage(text = "新しいLG gramが出品されました"))
             time.sleep(1800)
         line_bot_api.push_message(event['source']['userId'], TextSendMessage(text = "自動運転モード終了"))
     else:

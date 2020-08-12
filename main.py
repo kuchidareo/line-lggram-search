@@ -20,8 +20,10 @@ app = Flask(__name__)
 
 LINE_CHANNEL_ACCESS_TOKEN = 'I1HVvaO4TBkowJFcYhdwARPGL3xhMogYT8tOSQ5dUQriMzfITnbKMrenHQo/+mXhtxxDhgDevovtIpN6JUL7ARZCBqImBe7Voy+kv2TTKPXl9fOA/pcZGE09o/GxxDxRl8FCswD6Ff5hv+03PVw03gdB04t89/1O/w1cDnyilFU='
 LINE_CHANNEL_SECRET = '708857c7a0cff5555d7bea327d126b2a'
-USER_ID = 'Ub25fb265fec31034d75bb03c70d94900'
+
 search_word_list = [r"iPhone%2011","iPhone11"]
+MAX_PRICE = 60000
+MIN_PRICE = 30000
 
 line_bot_api = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(LINE_CHANNEL_SECRET)
@@ -59,7 +61,7 @@ def mercariSearchOnSale(search_word_list):
             new_elems_url = 'https://www.mercari.com' + elems_url[i].find('a').attrs['href']
             new_elems_image = elems_image[i].find('img').attrs['data-src']  # https://static.mercdn.net/c!/w=240/thumb/photos/m54024365745_1.jpg?1596248228
             new_elems_image.replace(new_elems_image[26:40],'item/detail/orig') # https://static.mercdn.net/item/detail/orig/photos/m54024365745_1.jpg?1596248228
-            if not new_elems_photo and int(new_elems_price) >= 30000:
+            if not new_elems_photo and MIN_PRICE <= int(new_elems_price) <= MAX_PRICE:
                 result_list.append([new_elems_name, new_elems_price, new_elems_url, new_elems_image])
     ## 重複を解消する
     result_list = list(map(list, set(map(tuple, result_list))))
@@ -87,7 +89,7 @@ def rakumaSearchOnSale(search_word_list):
                 new_elems_url = elems_url[i].find('a').attrs['href']
                 new_elems_image = elems_image[i].find('a').find('img').attrs['data-original']  # https://img.fril.jp/img/301356431/m/850895908.jpg?1582422155
                 new_elems_image.replace(new_elems_image[34],'l') # https://img.fril.jp/img/301356431/l/850895908.jpg?1582422155
-                if not new_elems_sold and int(new_elems_price) >= 30000:
+                if not new_elems_sold and MIN_PRICE <= int(new_elems_price) <= MAX_PRICE:
                     result_list.append([new_elems_name, new_elems_price, new_elems_url, new_elems_image])
     ## 重複を解消する
     result_list = list(map(list, set(map(tuple, result_list))))
@@ -128,7 +130,7 @@ def response_message(event):
                     result_list = new_result_list
                     line_bot_api.push_message(USER_ID, TextSendMessage(text = "新しいLG gramが出品されました"))
             time.sleep(1800)
-        line_bot_api.push_message(USER_ID, TextSendMessage(text = "自動運転モード終了"))
+        line_bot_api.push_message(event['source']['userId'], TextSendMessage(text = "自動運転モード終了"))
     else:
         try:
             result_list = searchUsedMarket(search_word_list)
@@ -148,9 +150,9 @@ def response_message(event):
                                 alt_text='LG gram search result',
                                 template=CarouselTemplate(columns=notes),
                                 )
-                line_bot_api.push_message(USER_ID, messages=messages)
+                line_bot_api.push_message(event['source']['userId'], messages=messages)
         except:
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text = "検索出来ませんでした"))
+            line_bot_api.reply_message(event['source']['userId'], TextSendMessage(text = "検索出来ませんでした"))
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 5000))

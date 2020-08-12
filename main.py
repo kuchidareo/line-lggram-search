@@ -117,7 +117,7 @@ def response_message(event):
     # item[3]:image_url
     print(event.source)
     if event.message.text == "PPAP":
-        line_bot_api.push_message(event.source['userId'] TextSendMessage(text = "自動運転モード"))
+        line_bot_api.push_message(event.source['userId'], TextSendMessage(text = "自動運転モード"))
         for i in range(calculateTime):
             if i == 0:
                 result_list = searchUsedMarket(search_word_list)

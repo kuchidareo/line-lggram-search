@@ -21,7 +21,7 @@ app = Flask(__name__)
 LINE_CHANNEL_ACCESS_TOKEN = 'I1HVvaO4TBkowJFcYhdwARPGL3xhMogYT8tOSQ5dUQriMzfITnbKMrenHQo/+mXhtxxDhgDevovtIpN6JUL7ARZCBqImBe7Voy+kv2TTKPXl9fOA/pcZGE09o/GxxDxRl8FCswD6Ff5hv+03PVw03gdB04t89/1O/w1cDnyilFU='
 LINE_CHANNEL_SECRET = '708857c7a0cff5555d7bea327d126b2a'
 USER_ID = 'Ub25fb265fec31034d75bb03c70d94900'
-search_word_list = [r"LG%20gram","LGgram"]
+search_word_list = [r"iPhone%2011","iPhone11"]
 
 line_bot_api = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(LINE_CHANNEL_SECRET)
@@ -134,7 +134,8 @@ def response_message(event):
             result_list = searchUsedMarket(search_word_list)
             result_list.sort(key=lambda x: int(x[1])) # priceでsort
             size = 10 # Max10個までなので
-            for start in range(0, len(result_list), size):
+            # for start in range(0, len(result_list), size):
+            for start in range(0, 30, size):
                 notes = []
                 ten_digit_result_list = result_list[start:start+size]
                 for result in ten_digit_result_list:
